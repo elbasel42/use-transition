@@ -1,25 +1,31 @@
 "use client";
 
-import { useState } from "react";
-import { action } from "./action";
+import { useState, useTransition } from "react";
+import { action } from "../action";
 
-const HomePage = () => {
-  const [loading, setLoading] = useState(false);
+const useTransitionPage = () => {
   const [num, setNum] = useState(0);
   const [submittedString, setSubmittedString] = useState("");
+  const [isPending, startTransition] = useTransition();
 
-  const formAction = async (formData: FormData) => {
+  const formAction = (formData: FormData) => {
+    console.log("Starting Transition");
     const submittedString =
       formData.get("string")?.toString() ?? "No string submitted";
     setSubmittedString(submittedString);
-    setLoading(true);
-    const result = await action(num);
-    setNum(result);
-    setLoading(false);
+
+    startTransition(async () => {
+      const result = await action(num);
+      setNum(result);
+    });
+
+    // setLoading(false);
+    console.log("Transition Ended");
   };
+
   return (
     <main className="flex items-center justify-center flex-col min-h-screen gap-2 text-2xl">
-      <h1>Homepage</h1>
+      <h1>Use Transition Page</h1>
       <form
         action={formAction}
         className="flex gap-4 flex-col items-center justify-center"
@@ -36,11 +42,11 @@ const HomePage = () => {
       </form>
       <div>
         <p>Action Called Num Times: {num}</p>
-        <p>Loading: {loading ? "true" : "false"}</p>
         <p>Submitted String: {submittedString}</p>
+        <p>isPending: {isPending ? "true" : "false"}</p>
       </div>
     </main>
   );
 };
 
-export default HomePage;
+export default useTransitionPage;

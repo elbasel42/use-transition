@@ -1,25 +1,34 @@
 "use client";
 
-import { useState } from "react";
-import { action } from "./action";
+import { useState, useActionState, useEffect } from "react";
+import { action } from "../action";
 
-const HomePage = () => {
-  const [loading, setLoading] = useState(false);
-  const [num, setNum] = useState(0);
-  const [submittedString, setSubmittedString] = useState("");
-
-  const formAction = async (formData: FormData) => {
+const useTransitionPage = () => {
+  const useActionStateAction = async (
+    prevState: number,
+    formData: FormData
+  ) => {
     const submittedString =
       formData.get("string")?.toString() ?? "No string submitted";
     setSubmittedString(submittedString);
-    setLoading(true);
-    const result = await action(num);
-    setNum(result);
-    setLoading(false);
+    const result = action(num);
+    return result;
   };
+
+  const [num, setNum] = useState(0);
+  const [submittedString, setSubmittedString] = useState("null");
+  const [state, formAction, isPending] = useActionState(
+    useActionStateAction,
+    0
+  );
+
+  useEffect(() => {
+    setNum(state);
+  }, [state]);
+
   return (
     <main className="flex items-center justify-center flex-col min-h-screen gap-2 text-2xl">
-      <h1>Homepage</h1>
+      <h1>Use ActionState Page</h1>
       <form
         action={formAction}
         className="flex gap-4 flex-col items-center justify-center"
@@ -36,11 +45,12 @@ const HomePage = () => {
       </form>
       <div>
         <p>Action Called Num Times: {num}</p>
-        <p>Loading: {loading ? "true" : "false"}</p>
+        <p>State: {state}</p>
         <p>Submitted String: {submittedString}</p>
+        <p>isPending: {isPending ? "true" : "false"}</p>
       </div>
     </main>
   );
 };
 
-export default HomePage;
+export default useTransitionPage;
