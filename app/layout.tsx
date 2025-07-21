@@ -28,10 +28,12 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <nav className="w-full p-2 underline text-blue-500 text-xl flex justify-center gap-2">
+        <nav className="w-full p-2 underline text-blue-500 text-xl flex justify-center gap-2 flex-wrap">
           <Link href="/">Home</Link>
           <Link href="/use-transition">useTransition</Link>
           <Link href="/use-action-state">useActionState</Link>
+          <Link href="/ui-blocking">UI Blocking</Link>
+          <Link href="/none-ui-blocking">None UI Blocking</Link>
         </nav>
         {children}
       </body>
